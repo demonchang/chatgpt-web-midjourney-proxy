@@ -22,7 +22,7 @@ services:
       #API_UPLOADER 是否可以上传 1 可以其他都不可以，可选
       API_UPLOADER:
       #HIDE_SERVER 隐藏服务端 1，可选
-      HIDE_SERVER:
+      HIDE_SERVER:1
       #自定义模型  CUSTOM_MODELS=-gpt-3.5-turbo-0301,gpt-4.5 不显示 gpt-3.5-turbo-0301 新增加 gpt-4.5，可选
       CUSTOM_MODELS:
       #TJ_BAIDU_ID 百度统计ID，可选
