@@ -1,5 +1,5 @@
 
-import { gptConfigStore, gptServerStore, homeStore } from "@/store";
+import { gptConfigStore, gptServerStore, homeStore,useAuthStore } from "@/store";
 import { mlog,myTrim } from "./mjapi";
 import { fetchSSE } from "./sse/fetchsse";
 import axios from 'axios';
@@ -8,14 +8,17 @@ import { isNumber, isObject } from "@/utils/is";
 import { t } from "@/locales";
 import { ChatMessage } from "gpt-tokenizer/esm/GptEncoding";
 import { chatSetting } from "./chat";
+
 //import {encode,  encodeChat}  from "gpt-tokenizer"
 //import {encode,  encodeChat} from "gpt-tokenizer/cjs/encoding/cl100k_base.js";
 //import { get_encoding } from '@dqbd/tiktoken'
 //import FormData from 'form-data';
 
+
 export const KnowledgeCutOffDate: Record<string, string> = {
   default: "2021-09",
   "gpt-4-1106-preview": "2023-04",
+  "gpt-4-0125-preview": "2023-04",
   "gpt-4-vision-preview": "2023-04",
 };
 
@@ -53,44 +56,44 @@ export const gptFetch=(url:string,data?:any,opt2?:any )=>{
 }
  // 前端直传 cloudflare r2
 function uploadR2(file: File) {
-	return new Promise<any>((resolve, reject) => {
-			//预签名
-			axios.post(gptGetUrl("/pre_signed"), { file_name: file.name, content_type: file.type }, {
-					headers: { 'Content-Type': 'application/json' }
-			}).then(response => {
-							if (response.data.status == "Success") {
-									const signedUrl = response.data.data.up;
-									//上传
-									fetch(signedUrl, {
-											method: 'PUT',
-											body: file,
-											headers: {
-													'Content-Type': file.type,
-											},
-									}).then(res2 => {
-											if (res2.ok) {
-													console.log('Upload successful!', response.data.data.url);
-													return resolve({ url: response.data.data.url });
-											} else {
-													return reject(res2)
-											}
-									}).catch(error => {
-											return reject(error)
-									});
+    return new Promise<any>((resolve, reject) => {
+            //预签名
+            axios.post(gptGetUrl("/pre_signed"), { file_name: file.name, content_type: file.type }, {
+                    headers: { 'Content-Type': 'application/json' }
+            }).then(response => {
+                            if (response.data.status == "Success") {
+                                    const signedUrl = response.data.data.up;
+                                    //上传
+                                    fetch(signedUrl, {
+                                            method: 'PUT',
+                                            body: file,
+                                            headers: {
+                                                    'Content-Type': file.type,
+                                            },
+                                    }).then(res2 => {
+                                            if (res2.ok) {
+                                                    console.log('Upload successful!', response.data.data.url);
+                                                    return resolve({ url: response.data.data.url });
+                                            } else {
+                                                    return reject(res2)
+                                            }
+                                    }).catch(error => {
+                                            return reject(error)
+                                    });
 
-							} else {
-									return reject(response.data);
-							}
-					}
-			).catch(error => reject(error));
-	});
+                            } else {
+                                    return reject(response.data);
+                            }
+                    }
+            ).catch(error => reject(error));
+    });
 }
 
 export const GptUploader =   ( url:string, FormData:FormData )=>{
-	 if(homeStore.myData.session.isUploadR2){
-			const file = FormData.get('file') as File;
-			return uploadR2(file);
-	 }
+     if(homeStore.myData.session.isUploadR2){
+            const file = FormData.get('file') as File;
+            return uploadR2(file);
+     }
 
     // if(gptServerStore.myData.OPENAI_API_BASE_URL){
     //     return `${ gptServerStore.myData.OPENAI_API_BASE_URL}${url}`;
@@ -101,7 +104,16 @@ export const GptUploader =   ( url:string, FormData:FormData )=>{
 
 
 
-    if(gptServerStore.myData.OPENAI_API_BASE_URL && url.indexOf(gptServerStore.myData.OPENAI_API_BASE_URL)>-1  ) headers={...headers,...getHeaderAuthorization()}
+    if(gptServerStore.myData.OPENAI_API_BASE_URL && url.indexOf(gptServerStore.myData.OPENAI_API_BASE_URL)>-1  ) {
+        headers={...headers,...getHeaderAuthorization()}
+        //mlog("headers", headers );
+    }else{
+         const authStore = useAuthStore()
+        if( authStore.token ) {
+            const  header2={ 'x-ptoken':  authStore.token };
+            headers= {...headers, ...header2}
+        }
+    }
     return new Promise<any>((resolve, reject) => {
             axios.post( url , FormData, {
             headers
@@ -153,9 +165,12 @@ interface subModelType{
     onError?:(d?:any)=>void
     signal?:AbortSignal
     model?:string
+    uuid?:string|number
 }
 function getHeaderAuthorization(){
     if(!gptServerStore.myData.OPENAI_API_KEY){
+        const authStore = useAuthStore()
+        if( authStore.token ) return { 'x-ptoken':  authStore.token };
         return {}
     }
     return {
@@ -185,13 +200,26 @@ export const subModel= async (opt: subModelType)=>{
     //
     const model= opt.model?? ( gptConfigStore.myData.model?gptConfigStore.myData.model: "gpt-3.5-turbo");
     let max_tokens= gptConfigStore.myData.max_tokens;
+    let temperature= 0.5;
+    let top_p= 1;
+    let presence_penalty= 0 , frequency_penalty=0;
+    if(opt.uuid){
+        const chatSet= new chatSetting( +opt.uuid);
+        const gStore= chatSet.getGptConfig();
+        temperature= gStore.temperature??temperature;
+        top_p = gStore.top_p??top_p;
+        presence_penalty = gStore.presence_penalty??presence_penalty;
+        frequency_penalty = gStore.frequency_penalty??frequency_penalty;
+        max_tokens= gStore.max_tokens;
+    }
     if(model=='gpt-4-vision-preview' && max_tokens>2048) max_tokens=2048;
+
     let body ={
             max_tokens ,
             model ,
-            "temperature": 0.5,
-            "top_p": 1,
-            "presence_penalty":0,
+            temperature,
+            top_p,
+            presence_penalty ,frequency_penalty,
             "messages": opt.message
            ,stream:true
         }
@@ -265,7 +293,8 @@ export const subTTS = async (tts:ttsType )=>{
       throw new Error(`API request failed with status ${response.status}`);
     }
     const audioData = await response.arrayBuffer();
-    const blob = new Blob([audioData], { type: 'audio/mp3' });
+    const contentType = response.headers.get('Content-Type')
+    const blob = new Blob([audioData], { type: contentType??'audio/mpeg' });
     mlog('blob', blob);
     const saveID = await localSaveAny( blob );
     const pp= await bolbObj(blob );
@@ -357,9 +386,11 @@ export const blurClean= ()=>{
   gptServerStore.myData.UPLOADER_URL=  myTrim( myTrim( gptServerStore.myData.UPLOADER_URL.trim(),'/'),'\\');
 }
 
-export const countTokens= async ( dataSources:Chat.Chat[], input:string )=>{
-    let rz={system:0,input:0 ,history:0,remain:330,modelTokens:'4k',planOuter: gptConfigStore.myData.max_tokens  }
-    const model = gptConfigStore.myData.model;
+export const countTokens= async ( dataSources:Chat.Chat[], input:string ,uuid:number )=>{
+    const chatSet= new chatSetting(uuid);
+    const myStore= chatSet.getGptConfig();
+    let rz={system:0,input:0 ,history:0,remain:330,modelTokens:'4k',planOuter:myStore.max_tokens  }
+    const model =myStore.model;
     const max= getModelMax(model );
     let unit= 1024;
     if(  model=='gpt-4-1106-preview' || model=='gpt-4-vision-preview' ) unit=1000;
@@ -382,13 +413,16 @@ const getModelMax=( model:string )=>{
     model= model.toLowerCase();
     if( model.indexOf('8k')>-1  ){
         return 8;
-    }else if( model.indexOf('16k')>-1 || model=='gpt-3.5-turbo-1106' ){
+    }else if( model.indexOf('16k')>-1 || model=='gpt-3.5-turbo-1106' || model=='gpt-3.5-turbo-0125' ){
         return 16;
     }else if( model.indexOf('32k')>-1  ){
         return 32;
     }else if( model.indexOf('64k')>-1  ){
         return 64;
-    }else if( model.indexOf('128k')>-1 || model=='gpt-4-1106-preview' || model=='gpt-4-vision-preview' ){
+    }else if( model.indexOf('128k')>-1 
+    || model=='gpt-4-1106-preview' 
+    || model=='gpt-4-0125-preview' 
+    || model=='gpt-4-vision-preview' ){
         return 128; 
     }else if( model.indexOf('gpt-4')>-1  ){  
         max=8;
