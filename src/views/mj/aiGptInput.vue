@@ -44,7 +44,7 @@ const handleSubmit = ( ) => {
         return ;
     }
     console.log(uuid);
-    fetch('https://www.shenmaio.com/api/chatgpt_balance_check', {
+    fetch('https://hjk.djbpt.com/api/chatgpt_balance_check', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
