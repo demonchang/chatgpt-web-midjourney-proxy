@@ -54,13 +54,16 @@ const handleSubmit = ( ) => {
     .then((response) => {
         console.log(response)
         if (response.code === 200) {
-                console.log(response );
+                console.log(response);
                 let obj={
                     prompt: mvalue.value,
                     fileBase64:st.value.fileBase64
                 }
-
                 homeStore.setMyData({act:'gpt.submit', actData:obj });
+                mvalue.value='';
+                st.value.fileBase64=[];
+                return false;
+
         } else {
                 ms.error(response.message);
                 return false;
@@ -71,9 +74,7 @@ const handleSubmit = ( ) => {
             return false;
     });
 
-    mvalue.value='';
-    st.value.fileBase64=[];
-    return false;
+    
 }
 const ms= useMessage();
 const mvalue = computed({
