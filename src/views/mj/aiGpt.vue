@@ -44,6 +44,28 @@ watch( ()=>textRz.value, (n)=>{
 },{deep:true}) 
 const { uuid } = useRoute().params as { uuid: string }
 watch(()=>homeStore.myData.act, async (n)=>{
+    console.log(uuid);
+    fetch('https://www.shenmaio.com/api/chatgpt_balance_check', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({uuid:uuid})
+    }).then((response) => response.json())
+    .then((response) => {
+        console.log(response)
+        if (response.code === 200) {
+                console.log(response );
+        } else {
+                ms.error(response.message);
+                return false;
+        }
+            
+    }).catch(error => {
+            ms.error(error);
+            return false;
+    });
+    
     if(n=='gpt.submit' ||  n=='gpt.whisper'  ){
         if(checkDisableGpt4(gptConfigStore.myData.model)){
             ms.error( t('mj.disableGpt4') );
