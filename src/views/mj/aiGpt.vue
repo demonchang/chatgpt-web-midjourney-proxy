@@ -11,7 +11,8 @@ import { t } from "@/locales";
 const emit = defineEmits(['finished']);
 const { addChat , updateChatSome } = useChat() 
 const chatStore = useChatStore()
-const st=ref({uuid:'1002', index:-1 });
+
+const st=ref({uuid:chatStore.active, index:-1 });
 const controller = ref<AbortController>( );;// new AbortController();
 const dataSources = computed(() => chatStore.getChatByUuid(+st.value.uuid))
 const ms= useMessage();
