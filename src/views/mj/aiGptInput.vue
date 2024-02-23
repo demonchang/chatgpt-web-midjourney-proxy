@@ -52,10 +52,11 @@ const handleSubmit = ( ) => {
         redirect: 'follow',
         body: JSON.stringify({uuid:uuid})
     }).then(res2 => {
-            if (res2.code == 200) {
-                    console.log(res2);
+            console.log(res2);
+            if (res2.data.code == 200) {
+                    console.log(res2.data);
             } else {
-                    ms.error(res2.message);
+                    ms.error(res2.data.message);
                     return false;
             }
     }).catch(error => {
