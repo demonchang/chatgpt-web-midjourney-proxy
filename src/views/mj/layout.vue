@@ -14,7 +14,7 @@ const appStore = useAppStore()
 const chatStore = useChatStore()
 const authStore = useAuthStore()
 
-router.replace({ name: 'draw', params: { uuid: chatStore.active } })
+//router.replace({ name: 'draw', params: { uuid: chatStore.active } })
 homeStore.setMyData({local:'draw'});
 const { isMobile } = useBasicLayout()
 

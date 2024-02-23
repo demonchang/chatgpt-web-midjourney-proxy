@@ -32,7 +32,7 @@ const go= async ( item: gptsType)=>{
     myFetch(gptUrl,item );
     emit('close');
     mlog('go local ', homeStore.myData.local );
-    if(homeStore.myData.local!=='Chat') router.replace({name:'Chat',params:{uuid:chatStore.active}});
+    //if(homeStore.myData.local!=='Chat') router.replace({name:'Chat',params:{uuid:chatStore.active}});
 
 }
 const pageLoad= async ()=>{
