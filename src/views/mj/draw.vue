@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import aiSiderInput from './aiSiderInput.vue'; 
-//import { useAppStore, useChatStore } from '@/store';
-
+import { useAppStore, useChatStore } from '@/store';
+import { useRoute } from 'vue-router'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { mlog } from '@/api';
 import chatIndex from '@/views/chat/index.vue';
+const route = useRoute()
+const chatStore = useChatStore()
+const { uuid } = route.params as { uuid: string }
+chatStore.active = uuid;
 
 const { isMobile } = useBasicLayout()
 // const appStore = useAppStore()
-// const chatStore = useChatStore()
+
+
 const drawSent=( obj:any )=>{
     mlog('drawSent' , obj )
 }
