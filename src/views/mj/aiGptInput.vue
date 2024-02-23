@@ -44,13 +44,12 @@ const handleSubmit = ( ) => {
         return ;
     }
     console.log(uuid);
-    let data.uuid = uuid;
     fetch('https://www.shenmaio.com/api/chatgpt_balance_check', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({uuid:uuid})
     }).then(res2 => {
             if (res2.code == 200) {
                     console.log(res2);
