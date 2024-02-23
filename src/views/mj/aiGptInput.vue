@@ -49,14 +49,14 @@ const handleSubmit = ( ) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        redirect: 'follow',
         body: JSON.stringify({uuid:uuid})
     }).then(res2 => {
-            console.log(res2);
-            if (res2.data.code == 200) {
-                    console.log(res2.data);
+            let result = res2.json();
+            console.log(result);
+            if (result.code == 200) {
+                    console.log(result);
             } else {
-                    ms.error(res2.data.message);
+                    ms.error(result.message);
                     return false;
             }
     }).catch(error => {
