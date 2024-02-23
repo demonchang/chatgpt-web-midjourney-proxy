@@ -53,8 +53,10 @@ const handleSubmit = ( ) => {
     }).then(res2 => {
             let result = res2.json();
             console.log(result);
-            if (result.code == 200) {
-                    console.log(result);
+            console.log(result.code);
+            console.log(result.data);
+            if (result.code === 200) {
+                    console.log(result );
             } else {
                     ms.error(result.message);
                     return false;
