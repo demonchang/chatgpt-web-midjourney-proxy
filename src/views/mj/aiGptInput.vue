@@ -44,11 +44,12 @@ const handleSubmit = ( ) => {
         return ;
     }
     console.log(uuid);
-    fetch('https://hjk.djbpt.com/api/chatgpt_balance_check', {
+    fetch('https://www.shenmaio.com/api/chatgpt_balance_check', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
         },
+        redirect: 'follow',
         body: JSON.stringify({uuid:uuid})
     }).then(res2 => {
             if (res2.code == 200) {
