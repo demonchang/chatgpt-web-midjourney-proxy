@@ -50,17 +50,16 @@ const handleSubmit = ( ) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({uuid:uuid})
-    }).then(res2 => {
-            let result = res2.json();
-            console.log(result);
-            console.log(result.code);
-            console.log(result.data);
-            if (result.code === 200) {
-                    console.log(result );
-            } else {
-                    ms.error(result.message);
-                    return false;
-            }
+    }).then((response) => response.json())
+    .then((response) => {
+        console.log(response)
+        if (response.code === 200) {
+                console.log(response );
+        } else {
+                ms.error(response.message);
+                return false;
+        }
+            
     }).catch(error => {
             ms.error(error);
             return false;
