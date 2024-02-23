@@ -43,6 +43,26 @@ const handleSubmit = ( ) => {
     if( homeStore.myData.isLoader  ) { 
         return ;
     }
+    console.log(uuid);
+    let data.uuid = uuid;
+    fetch('https://www.shenmaio.com/api/chatgpt_balance_check', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(res2 => {
+            if (res2.code == 200) {
+                    console.log(res2);
+            } else {
+                    ms.error(res2.message);
+                    return false;
+            }
+    }).catch(error => {
+            ms.error(error);
+            return false;
+    });
+
     let obj={
         prompt: mvalue.value,
         fileBase64:st.value.fileBase64
