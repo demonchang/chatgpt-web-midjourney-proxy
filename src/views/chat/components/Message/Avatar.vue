@@ -13,7 +13,7 @@ defineProps<Props>()
 
 const userStore = useUserStore()
 
-const avatar = computed(() => userStore.userInfo.avatar)
+const avatar = computed(() => defaultAvatar)
 </script>
 
 <template>

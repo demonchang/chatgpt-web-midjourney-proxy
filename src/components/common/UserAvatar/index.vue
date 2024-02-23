@@ -17,7 +17,7 @@ const userInfo = computed(() => userStore.userInfo)
         <NAvatar
           size="large"
           round
-          :src="userInfo.avatar"
+          :src="defaultAvatar"
           :fallback-src="defaultAvatar"
         />
       </template>
