@@ -1,9 +1,16 @@
 import { ss } from '@/utils/storage'
+import { gptConfigStore, homeStore,useChatStore } from '@/store';
+import { useRoute } from 'vue-router' 
+
+const route = useRoute() 
+const chatStore = useChatStore()
+const { uuid } = route.params as { uuid: string }
+chatStore.active = uuid;
 
 const LOCAL_NAME = 'chatStorage'
 
 export function defaultState(): Chat.ChatState {
-  const uuid = 1002
+  const uuid = chatStore.active
   return {
     active: uuid,
     usingContext: true,

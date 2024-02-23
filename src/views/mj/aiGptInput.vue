@@ -32,7 +32,6 @@ const placeholder = computed(() => {
 
 const { uuid } = route.params as { uuid: string }
 chatStore.active = uuid;
-
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 
 const handleSubmit = ( ) => {
