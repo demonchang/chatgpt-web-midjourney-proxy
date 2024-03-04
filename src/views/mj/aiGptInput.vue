@@ -31,9 +31,13 @@ const placeholder = computed(() => {
 
 
 const { uuid } = route.params as { uuid: string }
-chatStore.setActive(uuid)
+const { uid } = route.params as { uid: string }
+if(uid){
+    chatStore.setActives(uid)
+}
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
+cont user_id = chatStore.actives
 
 const handleSubmit = ( ) => {
     if( mvalue.value==''  ) return ;
@@ -50,7 +54,7 @@ const handleSubmit = ( ) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({uuid:uuid})
+        body: JSON.stringify({uuid:user_id})
     }).then((response) => response.json())
     .then((response) => {
         console.log(response)

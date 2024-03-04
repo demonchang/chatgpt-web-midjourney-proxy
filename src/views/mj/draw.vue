@@ -8,8 +8,11 @@ import chatIndex from '@/views/chat/index.vue';
 const route = useRoute()
 const chatStore = useChatStore()
 const { uuid } = route.params as { uuid: string }
+const { uid } = route.params as { uid: string }
+if(uid){
+	chatStore.setActives(uid)
+}
 
-chatStore.setActive(uuid)
 const { isMobile } = useBasicLayout()
 // const appStore = useAppStore()
 

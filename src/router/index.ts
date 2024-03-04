@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
     redirect: '/chat',
     children: [
       {
-        path: '/chat/:uuid?',
+        path: '/chat/:uuid/:uid?',
         name: 'Chat',
         component: () => import('@/views/chat/index.vue'),
       },
@@ -67,7 +67,7 @@ const routes: RouteRecordRaw[] = [
     redirect: '/draw/index',
     children: [
       {
-        path: '/draw/:uuid?',
+        path: '/draw/:uuid/:uid?',
         name: 'draw',
         component: () => import('@/views/mj/draw.vue'),
       },
