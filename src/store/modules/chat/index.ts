@@ -36,7 +36,7 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute(history.uuid)
     },
 
-    updateHistory(uuid: number, edit: Partial<Chat.History>) {
+    updateHistory(uuid: string, edit: Partial<Chat.History>) {
       const index = this.history.findIndex(item => item.uuid === uuid)
       if (index !== -1) {
         this.history[index] = { ...this.history[index], ...edit }
@@ -76,12 +76,12 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    async setActive(uuid: number) {
+    async setActive(uuid: string) {
       this.active = uuid
       return await this.reloadRoute(uuid)
     },
 
-    getChatByUuidAndIndex(uuid: number, index: number) {
+    getChatByUuidAndIndex(uuid: string, index: number) {
       if (!uuid || uuid === 0) {
         if (this.chat.length)
           return this.chat[0].data[index]
@@ -93,7 +93,7 @@ export const useChatStore = defineStore('chat-store', {
       return null
     },
 
-    addChatByUuid(uuid: number, chat: Chat.Chat) {
+    addChatByUuid(uuid: string, chat: Chat.Chat) {
       if (!uuid || uuid === 0) {
         if (this.history.length === 0) {
           const uuid = Date.now()
@@ -119,7 +119,7 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    updateChatByUuid(uuid: number, index: number, chat: Chat.Chat) {
+    updateChatByUuid(uuid: string, index: number, chat: Chat.Chat) {
       if (!uuid || uuid === 0) {
         if (this.chat.length) {
           this.chat[0].data[index] = chat
@@ -135,7 +135,7 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    updateChatSomeByUuid(uuid: number, index: number, chat: Partial<Chat.Chat>) {
+    updateChatSomeByUuid(uuid: string, index: number, chat: Partial<Chat.Chat>) {
       if (!uuid || uuid === 0) {
         if (this.chat.length) {
           this.chat[0].data[index] = { ...this.chat[0].data[index], ...chat }
@@ -151,7 +151,7 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    deleteChatByUuid(uuid: number, index: number) {
+    deleteChatByUuid(uuid: string, index: number) {
       if (!uuid || uuid === 0) {
         if (this.chat.length) {
           this.chat[0].data.splice(index, 1)
@@ -167,7 +167,7 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    clearChatByUuid(uuid: number) {
+    clearChatByUuid(uuid: string) {
       if (!uuid || uuid === 0) {
         if (this.chat.length) {
           this.chat[0].data = []
