@@ -31,7 +31,7 @@ const placeholder = computed(() => {
 
 
 const { uuid } = route.params as { uuid: string }
-await chatStore.setActive(uuid)
+chatStore.setActive(uuid)
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 

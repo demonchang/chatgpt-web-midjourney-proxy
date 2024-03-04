@@ -9,7 +9,7 @@ const route = useRoute()
 const chatStore = useChatStore()
 const { uuid } = route.params as { uuid: string }
 
-await chatStore.setActive(uuid)
+chatStore.setActive(uuid)
 const { isMobile } = useBasicLayout()
 // const appStore = useAppStore()
 
