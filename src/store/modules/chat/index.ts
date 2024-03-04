@@ -191,7 +191,7 @@ export const useChatStore = defineStore('chat-store', {
     async reloadRoute(uuid?: number) {
       this.recordState();
 
-      await router.push({ name: homeStore.myData.local=='draw'?'draw': 'Chat', params: { uuid } })
+      //await router.push({ name: homeStore.myData.local=='draw'?'draw': 'Chat', params: { uuid } })
     },
 
     recordState() {
