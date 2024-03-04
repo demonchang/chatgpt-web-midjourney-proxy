@@ -37,7 +37,8 @@ if(uid){
 }
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
-cont user_id = chatStore.actives
+
+const userId = chatStore.actives
 
 const handleSubmit = ( ) => {
     if( mvalue.value==''  ) return ;
@@ -54,7 +55,7 @@ const handleSubmit = ( ) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({uuid:user_id})
+        body: JSON.stringify({uuid:userId})
     }).then((response) => response.json())
     .then((response) => {
         console.log(response)
